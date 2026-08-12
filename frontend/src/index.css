@@ -150,6 +150,17 @@ button:focus {
   background-color: black;
 }
 
+header {
+  display: flex;
+  align-items: center;          /* vertically center */
+  gap: 1rem;                    /* optional small spacing between elements */
+  width: 100%;
+  padding: 1 0rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}
+
 footer {
   margin-top: 100px;
 }

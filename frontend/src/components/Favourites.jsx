@@ -1,17 +1,20 @@
 import React from "react";
-import { useState } from "react";
 
-function App() {
-  const [results, setResults] = useState([]);
+import NavBar from "../routes/navBar";
 
+export default function Favourites() {
   return (
-    <div className="App">
+    <div>
       <header>
-        <h3>iTunes Search</h3>
-        <hr className="hr-large"></hr>
-        <h1>Home</h1>
-        <hr className="hr-medium"></hr>
+        <h2>iTunes API</h2>
+        <NavBar />
       </header>
+
+      <main>
+        <hr className="hr-large"></hr>
+        <h1>Favourites</h1>
+        <hr className="hr-medium"></hr>
+      </main>
 
       <footer>
         <hr className="hr-medium"></hr>
@@ -23,5 +26,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
