@@ -1,6 +1,10 @@
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+
+// Log requests in terminal
+app.use(morgan('dev'));
 
 // Create express server instance and enable CORS
 const app = express();
@@ -11,10 +15,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Import routes
-// const { loginRoute, taskRoute } = require("./routes/routes");
-
-// loginRoute(app);
-// taskRoute(app);
+const { searchRoutes } = require('./routes/routes');
+searchRoutes(app);
 
 // Initialize server
 const PORT = process.env.PORT || 5000;
