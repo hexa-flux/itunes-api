@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 
 import NavBar from "../routes/navBar";
-import resultsLayout from "./resultsLayout";
+import ResultsLayout from "./resultsLayout";
 
 export default function Home() {
   const [results, setResults] = useState([]);
@@ -10,11 +10,16 @@ export default function Home() {
   return (
     <div>
       <header>
+        <h2>iTunes API</h2>
         <NavBar />
       </header>
 
       <main>
-        <resultsLayout />
+        <hr className="hr-large"></hr>
+        <h1>Home</h1>
+        <hr className="hr-medium"></hr>
+
+        <ResultsLayout />
       </main>
 
       <footer>
