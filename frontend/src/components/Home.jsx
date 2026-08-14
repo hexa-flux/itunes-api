@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { Spinner } from "react-bootstrap";
 
@@ -8,6 +8,7 @@ import axiosClient from "../api/axiosClient";
 import {
   saveResultsToSession,
   loadResultsFromSession,
+  toggleFavourite,
 } from "../utilities/utilities";
 import NavBar from "../routes/navBar";
 import SearchBar from "../forms/searchBar";
@@ -21,17 +22,23 @@ export default function Home() {
   const [results, setResults] = useState([]);
   const [lastQuery, setLastQuery] = useState(null);
 
-  // restore cached results on mount
-useEffect(() => {
-    const { results: cachedResults, lastQuery: cachedQuery } = loadResultsFromSession();
-    if (Array.isArray(cachedResults) && cachedResults.length > 0) {
-      setResults(cachedResults);
+  // Set local favourites to pass to ResultsLayout
+  const [favourites, setFavourites] = useState(() => {
+    try {
+      const raw = localStorage.getItem("favourites");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
     }
-    if (cachedQuery) {
-      setLastQuery(cachedQuery);
-    }
-  }, []);
+  });
 
+  // Create a fast lookup of ids (memoized)
+  const favouriteIds = React.useMemo(
+    () => new Set(favourites.map((f) => f.trackId)),
+    [favourites],
+  );
+
+  // Results fetcher
   const fetchResults = async (query) => {
     setResults([]);
     setMsg(null);
@@ -50,6 +57,7 @@ useEffect(() => {
         setResults([]);
         setMsg({ type: "error", text: "Unexpected response from server." });
         saveResultsToSession([], null);
+        setTimeout(() => setMsg(null), 2500);
       }
     } catch (err) {
       console.error("Failed to search:", err);
@@ -68,9 +76,39 @@ useEffect(() => {
           text: err?.response?.data?.error || err?.message || "Search failed.",
         });
       }
+      setTimeout(() => setMsg(null), 2500);
     } finally {
       setLoading(false);
     }
+  };
+
+  // restore cached results on mount
+  useEffect(() => {
+    const { results: cachedResults, lastQuery: cachedQuery } =
+      loadResultsFromSession();
+    if (Array.isArray(cachedResults) && cachedResults.length > 0) {
+      setResults(cachedResults);
+    }
+    if (cachedQuery) {
+      setLastQuery(cachedQuery);
+    }
+  }, []);
+
+  // Call favourites toggler
+  const handleFavourite = (item) => {
+    const next = toggleFavourite(item);
+    if (next) {
+      setFavourites(next)
+      if (next.some((f) => f.trackId === item.trackId)) {
+        setMsg({ type: "success", text: "Added to favourites." });
+      } else {
+        setMsg({ type: "success", text: "Removed from favourites." });
+      }
+    } else {
+      setMsg({ type: "error", text: "Failed to update favourites." });
+    }
+    // clear transient message
+    setTimeout(() => setMsg(null), 2000);
   };
 
   return (
@@ -93,13 +131,13 @@ useEffect(() => {
           onSubmit={fetchResults}
         />
 
+        <hr className="hr-medium"></hr>
+
         {msg && (
           <div style={{ color: msg.type === "error" ? "red" : "green" }}>
             {msg.text}
           </div>
         )}
-
-        <hr className="hr-medium"></hr>
 
         {/* Conditional rendering for loading / empty / results */}
         {loading ? (
@@ -112,9 +150,8 @@ useEffect(() => {
         ) : (
           <ResultsLayout
             results={results}
-            addToFavourites={() => {
-              /* ... */
-            }}
+            favouritesHandler={handleFavourite}
+            isFavourited={(item) => favouriteIds.has(item.trackId)}
           />
         )}
       </main>

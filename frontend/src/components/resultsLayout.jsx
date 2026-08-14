@@ -1,5 +1,4 @@
 import React from "react";
-import { useCallback } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 
 // Import item-kind renderers
@@ -7,7 +6,7 @@ import { MovieItem, TVShowItem, PodcastItem, MusicItem, AudiobookItem, SoftwareI
 import { safeHttpUrl, artworkWithSize } from "../utilities/utilities";
 
 // Pass data.results into this component
-export default function ResultsLayout({ results = [], addToFavourites }) {
+export default function ResultsLayout({ results = [], favouritesHandler, isFavourited }) {
   // Define item renderers
   const renderers = {
     movie: MovieItem,
@@ -29,22 +28,16 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
     unknown: DefaultItem,
   };
 
-  // stable handler so children won't receive a new function each render
-  const handleAddToFavourites = useCallback(
-    (item) => {
-      if (!item) return;
-      addToFavourites(item);
-    },
-    [addToFavourites],
-  );
-
-  const renderItem = useCallback((item, idx) => {
+  const renderItem = (item, idx) => {
       // Choose renderer based on item kind
       const typeKey = item.kind ?? item.wrapperType ?? item.entity ?? "unknown";
       const Renderer = renderers[typeKey] ?? DefaultItem;
 
       // Set thumbnail resolution
       const thumbnail = artworkWithSize(item.artworkUrl100, 400)
+
+      // Check if item is favourited
+      const isFav = isFavourited ? isFavourited(item) : false;
 
       // Choose trackViewUrl if present and valid, otherwise try collectionViewUrl.
       const preferredUrl = item.trackViewUrl ?? item.collectionViewUrl ?? null;
@@ -77,10 +70,11 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
                   <Button
                     variant="primary"
                     size="sm"
-                    onClick={() => handleAddToFavourites(item)}
-                    aria-label={`Add ${item.trackName ?? "item"} to favourites`}
+                    onClick={() => favouritesHandler(item)}
+                    aria-pressed={isFav}
+                    aria-label={isFav ? `Remove ${item.trackName} from favourites` : `Add ${item.trackName} to favourites`}
                   >
-                    Favourite
+                    {isFav ? "Remove favourite" : "Add favourite"}
                   </Button>
                 </div>
                 {/* RIGHT SIDE */}
@@ -107,8 +101,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
           </Card>
         </Col>
       );
-    },
-    [renderers, handleAddToFavourites]); // renderItem memoized to avoid recreating on each render if you pass it directly to map
+    }
 
   if (!results.length) return <p>No results found!</p>;
 

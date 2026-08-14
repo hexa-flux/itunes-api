@@ -1,7 +1,7 @@
 export const RESULTS_CACHE_KEY = 'itunes_results_v1';
 export const LAST_QUERY_KEY = 'itunes_last_query_v1';
 
-/* Results cache helper */
+/* Results cache helpers */
 export function saveResultsToSession(results, lastQuery) {
   try {
     sessionStorage.setItem(RESULTS_CACHE_KEY, JSON.stringify(results));
@@ -26,6 +26,23 @@ export function loadResultsFromSession() {
     console.warn('Failed to read search results from sessionStorage', e);
     return { results: null, lastQuery: null };
   }
+}
+
+/* Central favourites helper */
+export function toggleFavourite(item) {
+  if (!item.trackId) return null;
+
+  const raw = localStorage.getItem("favourites");
+  const favouritesList = raw ? JSON.parse(raw) : [];
+
+  const exists = favouritesList.some((f) => (f.trackId) === item.trackId);
+  const next = exists
+    ? favouritesList.filter((f) => (f.trackId) !== item.trackId) // remove if item exists
+    : [...favouritesList, item]; // Add new item
+
+  localStorage.setItem("favourites", JSON.stringify(next));
+  window.dispatchEvent(new Event("local-storage"));
+  return next;
 }
 
 /* Release year helper */

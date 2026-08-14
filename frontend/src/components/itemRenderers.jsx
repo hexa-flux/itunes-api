@@ -34,7 +34,8 @@ export function MovieItem({ item }) {
             {item.contentAdvisoryRating}
           </Badge>
         )}
-        {duration} · {item.primaryGenreName} · {releaseYear}
+        Movie · {item.primaryGenreName} · {releaseYear} <br />
+        {duration}
       </Card.Subtitle>
     </>
   );
@@ -64,7 +65,8 @@ export function TVShowItem({ item }) {
           </Badge>
         )}
         {item.collectionName}, Episode {item.trackNumber} <br />
-        {duration} · {item.primaryGenreName} · {releaseYear}
+        Show · {item.primaryGenreName} · {releaseYear} <br />
+        {duration}
       </Card.Subtitle>
     </>
   );
@@ -88,8 +90,8 @@ export function PodcastItem({ item }) {
             Explicit
           </Badge>
         )}
-        {item.trackCount || "-"} episodes · {item.primaryGenreName} ·{" "}
-        {releaseYear}
+        Podcast · {item.primaryGenreName} · {releaseYear} <br />
+        {item.trackCount || "-"} episodes
       </Card.Subtitle>
       <Card.Text>Podcast by {item.artistName}</Card.Text>
     </>
@@ -117,7 +119,8 @@ export function MusicItem({ item }) {
         )}
         {item.artistName} <br />
         {item?.collectionName || "Single"} <br />
-        {duration} · {item.primaryGenreName} · {releaseYear}
+        Music · {item.primaryGenreName} · {releaseYear} <br />
+        {duration}
       </Card.Subtitle>
     </>
   );
@@ -142,7 +145,7 @@ export function AudiobookItem({ item }) {
             Explicit
           </Badge>
         )}
-        {item.artistName} · {item.primaryGenreName} · {releaseYear} <br />
+        Book by {item.artistName} · {item.primaryGenreName} · {releaseYear} <br />
         {duration}
       </Card.Subtitle>
     </>
@@ -159,7 +162,7 @@ export function SoftwareItem({ item }) {
     <>
       <Card.Title>{item.trackName}</Card.Title>
       <Card.Subtitle>
-        {item.sellerName} · {item.primaryGenreName}
+        Software · {item.sellerName} · {item.primaryGenreName}
       </Card.Subtitle>
     </>
   );
