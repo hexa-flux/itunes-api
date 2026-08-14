@@ -3,12 +3,12 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 
-// Log requests in terminal
-app.use(morgan('dev'));
-
 // Create express server instance and enable CORS
 const app = express();
 app.use(cors());
+
+// Log requests in terminal
+app.use(morgan('dev'));
 
 // Set up req.body parser
 app.use(bodyParser.urlencoded({ extended: false }));

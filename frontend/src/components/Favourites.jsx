@@ -2,6 +2,8 @@ import React from "react";
 
 import NavBar from "../routes/navBar";
 
+import Logo from "../assets/v2-logo-long.svg";
+
 export default function Favourites() {
   return (
     <div>

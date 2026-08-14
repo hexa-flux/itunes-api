@@ -1,15 +1,22 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
-export default function SearchBar({ onSubmit }) {
+export default function SearchBar({ initialValues, onSubmit }) {
   const defaults = {
     query: "",
     mediaType: "all",
   };
 
+  // Use provided initialValues (if any), otherwise fall back to defaults
+  const formInitialValues = {
+    ...defaults,
+    ...(initialValues || {}),
+  };
+
   return (
     <Formik
-      initialValues={defaults}
+      initialValues={formInitialValues}
+      enableReinitialize={true} // Update form after reinitializing
       validate={(values) => {
         const errors = {};
         if (!values.query || !values.query.trim()) {
@@ -18,7 +25,7 @@ export default function SearchBar({ onSubmit }) {
         if (!values.mediaType) {
           errors.mediaType = "Media type is required.";
         }
-        return errors; // <-- important: return the errors object
+        return errors;
       }}
       onSubmit={(values, { setSubmitting, resetForm }) => {
         setSubmitting(true);

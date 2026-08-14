@@ -1,5 +1,3 @@
-const fetch = require('node-fetch'); // fetch() function
-
 function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
   const params = new URLSearchParams({
     term,
@@ -10,7 +8,7 @@ function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
   return `https://itunes.apple.com/search?${params.toString()}`;
 }
 
-// Example search
+// Search controller
 const search = async (req, res) => {
   const { term } = req.query;
   if (!term) return res.status(400).json({ error: 'term query parameter is required' });

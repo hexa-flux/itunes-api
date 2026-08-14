@@ -1,3 +1,33 @@
+export const RESULTS_CACHE_KEY = 'itunes_results_v1';
+export const LAST_QUERY_KEY = 'itunes_last_query_v1';
+
+/* Results cache helper */
+export function saveResultsToSession(results, lastQuery) {
+  try {
+    sessionStorage.setItem(RESULTS_CACHE_KEY, JSON.stringify(results));
+    if (lastQuery !== undefined) {
+      sessionStorage.setItem(LAST_QUERY_KEY, JSON.stringify(lastQuery));
+    }
+  } catch (e) {
+    // ignore storage errors (quota, private mode)
+    console.warn('Failed to save search results to sessionStorage', e);
+  }
+}
+
+export function loadResultsFromSession() {
+  try {
+    const raw = sessionStorage.getItem(RESULTS_CACHE_KEY);
+    const q = sessionStorage.getItem(LAST_QUERY_KEY);
+    return {
+      results: raw ? JSON.parse(raw) : null,
+      lastQuery: q ? JSON.parse(q) : null,
+    };
+  } catch (e) {
+    console.warn('Failed to read search results from sessionStorage', e);
+    return { results: null, lastQuery: null };
+  }
+}
+
 /* Release year helper */
 // Parse year from UTC release date format
 export function getYearFromIso(releaseDate, { fallback = "—" } = {}) {
@@ -136,4 +166,15 @@ export function safeHttpUrl(url) {
   if (typeof url !== "string") return null;
   // Basic validation: starts with http:// or https://
   return /^https?:\/\//i.test(url) ? url : null;
+}
+
+/* Helper to change artwork/thumbnail resolution */
+export function artworkWithSize(url, size = 600) {
+  if (!url || typeof url !== 'string') return url;
+  // replace trailing "/100x100bb.jpg" or "/60x60bb.jpg" with new size
+  try {
+    return url.replace(/\/\d+x\d+([^\s/]*)$/, `/${size}x${size}$1`);
+  } catch (e) {
+    return url;
+  }
 }

@@ -1,12 +1,77 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
+import { Spinner } from "react-bootstrap";
+
+import axiosClient from "../api/axiosClient";
+
+import {
+  saveResultsToSession,
+  loadResultsFromSession,
+} from "../utilities/utilities";
 import NavBar from "../routes/navBar";
-import searchBar from "../forms/searchBar";
+import SearchBar from "../forms/searchBar";
 import ResultsLayout from "./resultsLayout";
 
+import Logo from "../assets/v2-logo-long.svg";
+
 export default function Home() {
+  const [msg, setMsg] = useState(null);
+  const [loading, setLoading] = useState(null);
   const [results, setResults] = useState([]);
+  const [lastQuery, setLastQuery] = useState(null);
+
+  // restore cached results on mount
+useEffect(() => {
+    const { results: cachedResults, lastQuery: cachedQuery } = loadResultsFromSession();
+    if (Array.isArray(cachedResults) && cachedResults.length > 0) {
+      setResults(cachedResults);
+    }
+    if (cachedQuery) {
+      setLastQuery(cachedQuery);
+    }
+  }, []);
+
+  const fetchResults = async (query) => {
+    setResults([]);
+    setMsg(null);
+    setLoading(true);
+    setLastQuery(query);
+
+    try {
+      const res = await axiosClient.get("/itunes/search", { params: query });
+      const data = res.data;
+
+      if (Array.isArray(data.results)) {
+        setResults(data.results);
+        saveResultsToSession(data.results, query); // persist results + query
+      } else {
+        // server returned something unexpected
+        setResults([]);
+        setMsg({ type: "error", text: "Unexpected response from server." });
+        saveResultsToSession([], null);
+      }
+    } catch (err) {
+      console.error("Failed to search:", err);
+
+      if (err?.response?.status === 502) {
+        setMsg({
+          type: "error",
+          text:
+            err.response.data?.error ||
+            err.response.data?.message ||
+            "Search failed: Bad gateway.",
+        });
+      } else {
+        setMsg({
+          type: "error",
+          text: err?.response?.data?.error || err?.message || "Search failed.",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -19,10 +84,39 @@ export default function Home() {
         <hr className="hr-large"></hr>
         <h1>Home</h1>
         <hr className="hr-medium"></hr>
-        <searchBar />
+
+        <SearchBar
+          initialValues={{
+            query: lastQuery?.term ?? "",
+            mediaType: lastQuery?.media ?? "all",
+          }}
+          onSubmit={fetchResults}
+        />
+
+        {msg && (
+          <div style={{ color: msg.type === "error" ? "red" : "green" }}>
+            {msg.text}
+          </div>
+        )}
+
         <hr className="hr-medium"></hr>
 
-        <ResultsLayout />
+        {/* Conditional rendering for loading / empty / results */}
+        {loading ? (
+          <div className="text-center my-4" aria-live="polite" aria-busy="true">
+            <Spinner animation="border" role="status" variant="primary" />
+            <div className="mt-2 visually-hidden">Loading results…</div>
+          </div>
+        ) : results.length === 0 ? (
+          <div>No results found!</div>
+        ) : (
+          <ResultsLayout
+            results={results}
+            addToFavourites={() => {
+              /* ... */
+            }}
+          />
+        )}
       </main>
 
       <footer>
@@ -35,4 +129,3 @@ export default function Home() {
     </div>
   );
 }
-

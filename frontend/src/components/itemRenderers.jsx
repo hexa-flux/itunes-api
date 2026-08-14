@@ -16,9 +16,7 @@ export function MovieItem({ item }) {
     [item?.releaseDate],
   );
 
-  const showRating = isMOrAbove(item?.contentAdvisoryRating, {
-    threshold: threshold ?? undefined, // fall back to default if not provided
-  });
+  const showRating = isAtOrAbove(item?.contentAdvisoryRating);
 
   const duration = formatDuration(item?.trackTimeMillis);
 
@@ -38,7 +36,6 @@ export function MovieItem({ item }) {
         )}
         {duration} · {item.primaryGenreName} · {releaseYear}
       </Card.Subtitle>
-      <Card.Text>{item.longDescription}</Card.Text>
     </>
   );
 }
@@ -49,9 +46,7 @@ export function TVShowItem({ item }) {
     [item?.releaseDate],
   );
 
-  const showRating = isMOrAbove(item?.contentAdvisoryRating, {
-    threshold: threshold ?? undefined, // fall back to default if not provided
-  });
+  const showRating = isAtOrAbove(item?.contentAdvisoryRating);
 
   const duration = formatDuration(item?.trackTimeMillis);
 
@@ -70,7 +65,6 @@ export function TVShowItem({ item }) {
         )}
         {item.collectionName}, Episode {item.trackNumber} <br />
         {duration} · {item.primaryGenreName} · {releaseYear}
-        <Card.Text>{item.longDescription}</Card.Text>
       </Card.Subtitle>
     </>
   );
@@ -151,7 +145,6 @@ export function AudiobookItem({ item }) {
         {item.artistName} · {item.primaryGenreName} · {releaseYear} <br />
         {duration}
       </Card.Subtitle>
-      <Card.Text>{item.description}</Card.Text>
     </>
   );
 }
@@ -168,7 +161,6 @@ export function SoftwareItem({ item }) {
       <Card.Subtitle>
         {item.sellerName} · {item.primaryGenreName}
       </Card.Subtitle>
-      <Card.Text>{item.description}</Card.Text>
     </>
   );
 }

@@ -4,7 +4,7 @@ import { Container, Row, Col, Card, Button } from "react-bootstrap";
 
 // Import item-kind renderers
 import { MovieItem, TVShowItem, PodcastItem, MusicItem, AudiobookItem, SoftwareItem, DefaultItem } from "./itemRenderers";
-import { safeHttpUrl } from "../utilities/utilities";
+import { safeHttpUrl, artworkWithSize } from "../utilities/utilities";
 
 // Pass data.results into this component
 export default function ResultsLayout({ results = [], addToFavourites }) {
@@ -14,6 +14,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
     "feature-movie": MovieItem,
     shortFilm: MovieItem,
     tvShow: TVShowItem,
+    "tv-episode": TVShowItem,
     podcast: PodcastItem,
     "podcast-episode": PodcastItem,
     music: MusicItem,
@@ -37,9 +38,13 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
     [addToFavourites],
   );
 
-  const renderItem = (item, idx) => {
+  const renderItem = useCallback((item, idx) => {
+      // Choose renderer based on item kind
       const typeKey = item.kind ?? item.wrapperType ?? item.entity ?? "unknown";
       const Renderer = renderers[typeKey] ?? DefaultItem;
+
+      // Set thumbnail resolution
+      const thumbnail = artworkWithSize(item.artworkUrl100, 400)
 
       // Choose trackViewUrl if present and valid, otherwise try collectionViewUrl.
       const preferredUrl = item.trackViewUrl ?? item.collectionViewUrl ?? null;
@@ -53,7 +58,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
             {item.artworkUrl100 && (
               <Card.Img
                 variant="top"
-                src={item.artworkUrl100}
+                src={thumbnail}
                 alt={item.trackName}
                 style={{ objectFit: "cover", height: 220 }}
                 loading="lazy"
@@ -61,7 +66,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
             )}
             <Card.Body>
               {/* Build the inner content by invoking the chosen renderer */}
-              <Renderer item={item} />;
+              <Renderer item={item} />
               {/* 
               Row for controls.
               Using d-flex + justify-content-between so left and right groups align.
@@ -103,7 +108,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
         </Col>
       );
     },
-    [renderers, handleAddToFavourites]; // renderItem memoized to avoid recreating on each render if you pass it directly to map
+    [renderers, handleAddToFavourites]); // renderItem memoized to avoid recreating on each render if you pass it directly to map
 
   if (!results.length) return <p>No results found!</p>;
 
