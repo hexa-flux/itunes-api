@@ -2,6 +2,7 @@ import React from "react";
 import { useState } from "react";
 
 import NavBar from "../routes/navBar";
+import searchBar from "../forms/searchBar";
 import ResultsLayout from "./resultsLayout";
 
 export default function Home() {
@@ -17,6 +18,8 @@ export default function Home() {
       <main>
         <hr className="hr-large"></hr>
         <h1>Home</h1>
+        <hr className="hr-medium"></hr>
+        <searchBar />
         <hr className="hr-medium"></hr>
 
         <ResultsLayout />
