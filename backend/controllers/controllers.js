@@ -1,3 +1,23 @@
+const jwt = require('jsonwebtoken');
+
+function issueToken(req, res) {
+  // NOTE: In production you should protect this endpoint (API key, client certificate, etc.)
+  // so that arbitrary clients can't request tokens.
+  const secret = process.env.JWT_SECRET || "Fave-manager";
+  const expiresIn = process.env.JWT_EXPIRES_IN || "30m";
+
+  // Minimal token payload:
+  const payload = {
+    sub: "api-user",
+    service: "itunes-proxy"
+  };
+
+  const token = jwt.sign(payload, secret, { algorithm: "HS256", expiresIn });
+
+  res.json({ token });
+}
+
+
 function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
   const params = new URLSearchParams({
     term,
@@ -10,6 +30,8 @@ function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
 
 // Search controller
 const search = async (req, res) => {
+  console.log('Search requested by:', req.user);
+  
   const { term } = req.query;
   if (!term) return res.status(400).json({ error: 'term query parameter is required' });
 
@@ -34,5 +56,6 @@ const search = async (req, res) => {
 };
 
 module.exports = {
+    issueToken,
     search
 }

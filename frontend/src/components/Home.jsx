@@ -1,9 +1,10 @@
 import React from "react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 
 import { Spinner } from "react-bootstrap";
 
 import axiosClient from "../api/axiosClient";
+import { AuthContext } from '../auth/AuthProvider';
 
 import {
   saveResultsToSession,
@@ -17,6 +18,8 @@ import ResultsLayout from "./resultsLayout";
 import Logo from "../assets/v2-logo-long.svg";
 
 export default function Home() {
+  const { ready } = useContext(AuthContext);
+
   const [msg, setMsg] = useState(null);
   const [loading, setLoading] = useState(null);
   const [results, setResults] = useState([]);
@@ -44,6 +47,14 @@ export default function Home() {
     setMsg(null);
     setLoading(true);
     setLastQuery(query);
+
+    // If AuthProvider hasn't finished initialization, bail out early.
+    if (!ready) {
+    setLoading(false);
+    setMsg({ type: "error", text: "Please wait — initializing authentication." });
+    setTimeout(() => setMsg(null), 2500);
+    return;
+  }
 
     try {
       const res = await axiosClient.get("/itunes/search", { params: query });
@@ -129,6 +140,7 @@ export default function Home() {
             mediaType: lastQuery?.media ?? "all",
           }}
           onSubmit={fetchResults}
+          disabled={!ready || loading}
         />
 
         <hr className="hr-medium"></hr>
