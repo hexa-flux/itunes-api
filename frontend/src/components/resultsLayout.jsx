@@ -3,7 +3,8 @@ import { useCallback } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 
 // Import item-kind renderers
-import { MovieItem, PodcastItem, DefaultItem } from "./itemRenderers";
+import { MovieItem, TVShowItem, PodcastItem, MusicItem, AudiobookItem, SoftwareItem, DefaultItem } from "./itemRenderers";
+import { safeHttpUrl } from "../utilities/utilities";
 
 // Pass data.results into this component
 export default function ResultsLayout({ results = [], addToFavourites }) {
@@ -12,7 +13,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
     movie: MovieItem,
     "feature-movie": MovieItem,
     shortFilm: MovieItem,
-    tvShow: MovieItem,
+    tvShow: TVShowItem,
     podcast: PodcastItem,
     "podcast-episode": PodcastItem,
     music: MusicItem,
@@ -21,8 +22,8 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
     "music-video": MusicItem,
     audiobook: AudiobookItem,
     software: SoftwareItem,
-    ebook: EbookItem,
-    book: EbookItem,
+    ebook: AudiobookItem,
+    book: AudiobookItem,
     // fallback for unknown kinds
     unknown: DefaultItem,
   };
@@ -40,12 +41,9 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
       const typeKey = item.kind ?? item.wrapperType ?? item.entity ?? "unknown";
       const Renderer = renderers[typeKey] ?? DefaultItem;
 
-      // validate URL before using it in href
-      const safeUrl =
-        typeof item.trackViewUrl === "string" &&
-        /^https?:\/\//i.test(item.trackViewUrl)
-          ? item.trackViewUrl
-          : null;
+      // Choose trackViewUrl if present and valid, otherwise try collectionViewUrl.
+      const preferredUrl = item.trackViewUrl ?? item.collectionViewUrl ?? null;
+      const safeUrl = safeHttpUrl(preferredUrl);
 
       // Wrap the content in the shared card frame and return
       return (
@@ -67,7 +65,7 @@ export default function ResultsLayout({ results = [], addToFavourites }) {
               {/* 
               Row for controls.
               Using d-flex + justify-content-between so left and right groups align.
-            */}
+              */}
               <div className="d-flex justify-content-between align-items-center mt-2">
                 {/* LEFT SIDE */}
                 <div>

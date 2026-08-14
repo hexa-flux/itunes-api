@@ -1,6 +1,6 @@
 const fetch = require('node-fetch'); // fetch() function
 
-function buildItunesUrl({ term, country = 'us', media = 'music', limit = 20 }) {
+function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
   const params = new URLSearchParams({
     term,
     country,
