@@ -22,9 +22,8 @@ export function MovieItem({ item }) {
 
   return (
     <>
-      <Card.Title>{item.trackName}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">
-        {/* Rating badge shown only if M or above */}
+      <Card.Title>
+        {item.trackName} {/* Rating badge shown only if M or above */}
         {showRating && (
           <Badge
             bg="danger"
@@ -34,8 +33,12 @@ export function MovieItem({ item }) {
             {item.contentAdvisoryRating}
           </Badge>
         )}
-        Movie · {item.primaryGenreName} · {releaseYear} <br />
-        {duration}
+      </Card.Title>
+      <Card.Subtitle className="subtitle">
+        <p>
+          Movie · {item.primaryGenreName} · {releaseYear}
+        </p>
+        <p>{duration}</p>
       </Card.Subtitle>
     </>
   );
@@ -53,8 +56,8 @@ export function TVShowItem({ item }) {
 
   return (
     <>
-      <Card.Title>{item.trackName}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">
+      <Card.Title>
+        {item.trackName}
         {showRating && (
           <Badge
             bg="danger"
@@ -64,9 +67,11 @@ export function TVShowItem({ item }) {
             {item.contentAdvisoryRating}
           </Badge>
         )}
-        {item.collectionName}, Episode {item.trackNumber} <br />
-        Show · {item.primaryGenreName} · {releaseYear} <br />
-        {duration}
+        </Card.Title>
+      <Card.Subtitle className="subtitle">
+          <p>{item.collectionName}, Episode {item.trackNumber}</p>
+          <p>Show · {item.primaryGenreName} · {releaseYear}</p>
+          <p>{duration}</p>
       </Card.Subtitle>
     </>
   );
@@ -83,15 +88,17 @@ export function PodcastItem({ item }) {
 
   return (
     <>
-      <Card.Title>{item.collectionName ?? item.trackName}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">
+      <Card.Title>
+        {item.collectionName ?? item.trackName}
         {showExplicit && (
           <Badge bg="danger" className="me-2" aria-label={`Explicit`}>
             Explicit
           </Badge>
         )}
-        Podcast · {item.primaryGenreName} · {releaseYear} <br />
-        {item.trackCount || "-"} episodes
+        </Card.Title>
+      <Card.Subtitle className="subtitle">
+          <p>Podcast · {item.primaryGenreName} · {releaseYear}</p>
+          <p>{item.trackCount || "-"} episodes</p>
       </Card.Subtitle>
       <Card.Text>Podcast by {item.artistName}</Card.Text>
     </>
@@ -110,17 +117,19 @@ export function MusicItem({ item }) {
 
   return (
     <>
-      <Card.Title>{item.trackName}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">
+      <Card.Title>
+        {item.trackName}
         {showExplicit && (
           <Badge bg="danger" className="me-2" aria-label={`Explicit`}>
             Explicit
           </Badge>
         )}
-        {item.artistName} <br />
-        {item?.collectionName || "Single"} <br />
-        Music · {item.primaryGenreName} · {releaseYear} <br />
-        {duration}
+        </Card.Title>
+      <Card.Subtitle className="subtitle">
+          <p>{item.artistName}</p>
+          <p>{item?.collectionName || "Single"}</p>
+          <p>Music · {item.primaryGenreName} · {releaseYear}</p>
+          <p>{duration}</p>
       </Card.Subtitle>
     </>
   );
@@ -138,15 +147,17 @@ export function AudiobookItem({ item }) {
 
   return (
     <>
-      <Card.Title>{item.collectionName}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">
+      <Card.Title>
+        {item.collectionName}
         {showExplicit && (
           <Badge bg="danger" className="me-2" aria-label={`Explicit`}>
             Explicit
           </Badge>
         )}
-        Book by {item.artistName} · {item.primaryGenreName} · {releaseYear} <br />
-        {duration}
+        </Card.Title>
+      <Card.Subtitle className="subtitle">
+          <p>Book by {item.artistName} · {item.primaryGenreName} · {releaseYear}</p>
+          <p>{duration}</p>
       </Card.Subtitle>
     </>
   );
@@ -161,7 +172,7 @@ export function SoftwareItem({ item }) {
   return (
     <>
       <Card.Title>{item.trackName}</Card.Title>
-      <Card.Subtitle>
+      <Card.Subtitle className="subtitle">
         Software · {item.sellerName} · {item.primaryGenreName}
       </Card.Subtitle>
     </>
@@ -178,7 +189,7 @@ export function DefaultItem({ item }) {
     <div>
       <strong>{item.trackName ?? item.collectionName ?? "Unknown"}</strong>
       {releaseYear !== "—" && (
-        <span style={{ marginLeft: 8 }}>{releaseYear}</span>
+        <span className="subtitle">{releaseYear}</span>
       )}
     </div>
   );

@@ -1,3 +1,12 @@
+/* remove default heading margin so it lines up vertically */
+header h2 {
+  margin: 0;
+  font-size: 1.5rem; /* adjust to taste */
+  line-height: 1;    /* tight control over vertical rhythm */
+  display: inline-block;
+  vertical-align: middle;
+}
+
 .navbar {
   display: flex;
   align-items: center;

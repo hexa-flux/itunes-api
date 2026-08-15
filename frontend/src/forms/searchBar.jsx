@@ -1,6 +1,8 @@
   import React from "react";
   import { Formik, Form, Field, ErrorMessage } from "formik";
 
+  import "./searchBarFormat.css"
+
   export default function SearchBar({ initialValues, onSubmit, disabled = false }) {
     const defaults = {
       query: "",
@@ -60,8 +62,8 @@
           const btnDisabled = disabled || isSubmitting;
 
           return(
-          <Form>
-            <div className="field">
+          <Form className="form-row">
+            <div className="field field--query">
               <label htmlFor="query">Search</label>
               <Field id="query" name="query" placeholder="Search..." />
               <div style={{ color: "red" }}>
@@ -69,7 +71,7 @@
               </div>
             </div>
 
-            <div className="field">
+            <div className="field field--media">
               <label htmlFor="mediaType">Media type</label>
               <Field as="select" id="mediaType" name="mediaType">
                 <option value="all">All</option>
@@ -88,7 +90,7 @@
               </div>
             </div>
 
-            <div>
+            <div className="form-actions">
               <button type="submit" disabled={btnDisabled}>
                 {/* Prioritise isSubmitting for the button label so "Searching..." shows during submission */}
                 {isSubmitting ? "Searching..." : disabled ? "Initializing…" : "Search"}

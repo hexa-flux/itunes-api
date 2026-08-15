@@ -1,0 +1,60 @@
+.product-card {
+  background-color: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--rule);
+}
+
+.product-card .btn-primary {
+  background-color: black;
+  border-color: black;
+  color: var(--text);
+}
+
+.product-card .btn-primary:hover {
+  background-color: var(--hover);
+  border-color: var(--hover);
+}
+
+.product-card .subtitle{
+  opacity: 0.8;
+}
+
+.product-card .btn[aria-pressed="true"] {
+  background-color: var(--bg);
+  border: 2px solid var(--rule);
+}
+
+/* base thumbnail: cropped, consistent height */
+.product-card .thumb {
+  width: 100%;
+  overflow: hidden;
+  max-height: 220px;              /* initial cropped height */
+  transition: max-height 700ms ease;
+  position: relative;
+}
+
+/* thumbnail image: cover (cropped) */
+.product-card .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 700ms ease, object-fit 700ms ease;
+}
+
+/* on hover: expand container and show full image */
+.product-card:hover .thumb {
+  max-height: 520px;              /* expanded height to fit full image */
+  transition: max-height 750ms ease;
+}
+
+/* when expanded, show full image inside the container */
+.product-card:hover .thumb img {
+  object-fit: contain;            /* show full image inside new container */
+  transform: none;
+}
+
+/* optional: subtle scale for thumbnail when not expanded */
+.product-card .thumb:hover img {
+  transform: scale(1.03);
+}

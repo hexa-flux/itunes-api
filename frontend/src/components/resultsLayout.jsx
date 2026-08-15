@@ -2,11 +2,25 @@ import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 
 // Import item-kind renderers
-import { MovieItem, TVShowItem, PodcastItem, MusicItem, AudiobookItem, SoftwareItem, DefaultItem } from "./itemRenderers";
+import {
+  MovieItem,
+  TVShowItem,
+  PodcastItem,
+  MusicItem,
+  AudiobookItem,
+  SoftwareItem,
+  DefaultItem,
+} from "./itemRenderers";
 import { safeHttpUrl, artworkWithSize } from "../utilities/utilities";
 
+import "./resultsFormat.css";
+
 // Pass data.results into this component
-export default function ResultsLayout({ results = [], favouritesHandler, isFavourited }) {
+export default function ResultsLayout({
+  results = [],
+  favouritesHandler,
+  isFavourited,
+}) {
   // Define item renderers
   const renderers = {
     movie: MovieItem,
@@ -29,79 +43,88 @@ export default function ResultsLayout({ results = [], favouritesHandler, isFavou
   };
 
   const renderItem = (item, idx) => {
-      // Choose renderer based on item kind
-      const typeKey = item.kind ?? item.wrapperType ?? item.entity ?? "unknown";
-      const Renderer = renderers[typeKey] ?? DefaultItem;
+    // Choose renderer based on item kind
+    const typeKey = item.kind ?? item.wrapperType ?? item.entity ?? "unknown";
+    const Renderer = renderers[typeKey] ?? DefaultItem;
 
-      // Set thumbnail resolution
-      const thumbnail = artworkWithSize(item.artworkUrl100, 400)
+    // Set candidate resolutions
+    const src200 = artworkWithSize(item.artworkUrl100, 200);
+    const src400 = artworkWithSize(item.artworkUrl100, 400);
+    const src800 = artworkWithSize(item.artworkUrl100, 800);
 
-      // Check if item is favourited
-      const isFav = isFavourited ? isFavourited(item) : false;
+    // Check if item is favourited
+    const isFav = isFavourited ? isFavourited(item) : false;
 
-      // Choose trackViewUrl if present and valid, otherwise try collectionViewUrl.
-      const preferredUrl = item.trackViewUrl ?? item.collectionViewUrl ?? null;
-      const safeUrl = safeHttpUrl(preferredUrl);
+    // Choose trackViewUrl if present and valid, otherwise try collectionViewUrl.
+    const preferredUrl = item.trackViewUrl ?? item.collectionViewUrl ?? null;
+    const safeUrl = safeHttpUrl(preferredUrl);
 
-      // Wrap the content in the shared card frame and return
-      return (
-        <Col key={item.trackId ?? item.collectionId ?? idx}>
-          <Card className="h-100 product-card">
-            {/* Lazy loading is used to reduce initial load */}
-            {item.artworkUrl100 && (
-              <Card.Img
-                variant="top"
-                src={thumbnail}
+    // Wrap the content in the shared card frame and return
+    return (
+      <Col key={item.trackId ?? item.collectionId ?? idx}>
+        <Card className="h-100 product-card">
+          {/* Lazy loading is used to reduce initial load */}
+          {/* With responsive resolution selection */}
+          {item.artworkUrl100 && (
+            <div className="thumb">
+              <img
+                src={src400}
+                srcSet={`${src200} 200w, ${src400} 400w, ${src800} 800w`}
+                sizes="(max-width: 768px) 200px, (max-width: 992px) 400px, 800px"
                 alt={item.trackName}
-                style={{ objectFit: "cover", height: 220 }}
                 loading="lazy"
               />
-            )}
-            <Card.Body>
-              {/* Build the inner content by invoking the chosen renderer */}
-              <Renderer item={item} />
-              {/* 
+            </div>
+          )}
+          <Card.Body className="d-flex flex-column">
+            {/* Build the inner content by invoking the chosen renderer */}
+            <Renderer item={item} />
+            {/* 
               Row for controls.
               Using d-flex + justify-content-between so left and right groups align.
               */}
-              <div className="d-flex justify-content-between align-items-center mt-2">
-                {/* LEFT SIDE */}
-                <div>
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => favouritesHandler(item)}
-                    aria-pressed={isFav}
-                    aria-label={isFav ? `Remove ${item.trackName} from favourites` : `Add ${item.trackName} to favourites`}
-                  >
-                    {isFav ? "Remove favourite" : "Add favourite"}
-                  </Button>
-                </div>
-                {/* RIGHT SIDE */}
-                <div>
-                  {/* Open iTunes in new window */}
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    href={safeUrl || undefined}
-                    target={safeUrl ? "_blank" : undefined}
-                    rel={safeUrl ? "noopener noreferrer" : undefined}
-                    aria-label={
-                      safeUrl
-                        ? `View ${item.trackName ?? "item"} on iTunes`
-                        : undefined
-                    }
-                    disabled={!safeUrl}
-                  >
-                    View on iTunes
-                  </Button>
-                </div>
+            <div className="d-flex justify-content-between align-items-center mt-2 mt-auto gap-3">
+              {/* LEFT SIDE */}
+              <div>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={() => favouritesHandler(item)}
+                  aria-pressed={isFav}
+                  aria-label={
+                    isFav
+                      ? `Remove ${item.trackName} from favourites`
+                      : `Add ${item.trackName} to favourites`
+                  }
+                >
+                  {isFav ? "Remove favourite" : "Add favourite"}
+                </Button>
               </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      );
-    }
+              {/* RIGHT SIDE */}
+              <div>
+                {/* Open iTunes in new window */}
+                <Button
+                  variant="primary"
+                  size="sm"
+                  href={safeUrl || undefined}
+                  target={safeUrl ? "_blank" : undefined}
+                  rel={safeUrl ? "noopener noreferrer" : undefined}
+                  aria-label={
+                    safeUrl
+                      ? `View ${item.trackName ?? "item"} on iTunes`
+                      : undefined
+                  }
+                  disabled={!safeUrl}
+                >
+                  View on iTunes
+                </Button>
+              </div>
+            </div>
+          </Card.Body>
+        </Card>
+      </Col>
+    );
+  };
 
   if (!results.length) return <p>No results found!</p>;
 

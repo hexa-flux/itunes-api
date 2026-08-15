@@ -70,11 +70,15 @@ export default function Favourites() {
           </div>
         )}
 
-        <ResultsLayout
-          results={favourites}
-          favouritesHandler={handleRemoval}
-          isFavourited={(item) => favouriteIds.has(item.trackId)}
-        />
+        {favourites.length ? (
+          <ResultsLayout
+            results={favourites}
+            favouritesHandler={handleRemoval}
+            isFavourited={(item) => favouriteIds.has(item.trackId)}
+          />
+        ) : (
+          <p>You have no favourites!</p>
+        )}
       </main>
 
       <footer>

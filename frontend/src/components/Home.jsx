@@ -72,8 +72,15 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Failed to search:", err);
-
-      if (err?.response?.status === 502) {
+      if (err?.response?.status === 401) {
+        setMsg({
+          type: "error",
+          text:
+            err.response.data?.error ||
+            err.response.data?.message ||
+            "Search failed: Invalid token.",
+        });
+      } else if (err?.response?.status === 502) {
         setMsg({
           type: "error",
           text:
@@ -126,6 +133,7 @@ export default function Home() {
     <div>
       <header>
         <h2>iTunes API</h2>
+        <h2 className="divider">|</h2>
         <NavBar />
       </header>
 

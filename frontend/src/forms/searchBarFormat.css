@@ -1,0 +1,89 @@
+.form-row {
+    margin-bottom: 3rem;
+}
+
+/* remove broad global margins for controls inside the form-row */
+.form-row .field > input,
+.form-row .field > select,
+.form-row .field > textarea {
+  margin: 0;              /* ensure no stray margins */
+  box-sizing: border-box; /* consistent sizing model */
+}
+
+/* normalize font/line-height/padding so controls compute equal heights */
+.form-row .field > input,
+.form-row .field > select,
+.form-row .field > textarea {
+  font-family: var(--sans);
+  font-size: 20px;
+  line-height: 1.2;       /* ensures text vertical rhythm */
+  padding: 10px;          /* same padding for inputs and selects */
+  min-height: 48px;       /* keep visual parity (use height if you want fixed) */
+  height: auto;           /* allow vertical flex if needed, but min-height enforces baseline */
+  border: none;
+  background-color: black;
+  color: var(--text);
+}
+
+/* help select match more closely across browsers */
+.form-row .field > select {
+  /* remove native arrow styling on some browsers (optional), then add custom if needed */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 2.5rem; /* leave room for custom arrow if you add one */
+}
+
+/* layout row holding all controls inline */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start; /* align tops so labels don't push button up */
+}
+
+/* each field stacks label above control, and is a flex item that can shrink */
+.field {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;          /* critical: allow this column to shrink */
+}
+
+/* sizing for the specific fields:
+   - search gets most of the space
+   - mediaType gets a compact fixed-ish width
+*/
+.field--query {
+  flex: 1 1 320px;       /* grow, shrink, base 320px */
+}
+
+.field--media {
+  flex: 0 0 200px;       /* don't shrink, fixed-ish width (adjust as needed) */
+  min-width: 120px;      /* ensure it never becomes too small */
+}
+
+/* inputs/selects full width of their field container */
+.field > input,
+.field > select,
+.field > textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;             /* remove global margins that make sizing awkward */
+}
+
+/* actions (submit) aligned with inputs */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin-top: calc( /* roughly aligns with input baseline; tweak if needed */ 2rem );
+}
+
+/* responsive: stack fields under narrow widths */
+@media (max-width: 768px) {
+  .form-row { flex-direction: column; gap: 0.75rem; }
+  .form-actions { align-self: stretch; margin-top: 0; }
+}

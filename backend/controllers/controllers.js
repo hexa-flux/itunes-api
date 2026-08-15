@@ -18,7 +18,7 @@ function issueToken(req, res) {
 }
 
 
-function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
+function buildItunesUrl({ term, country = 'au', media = 'all', limit = 24 }) {
   const params = new URLSearchParams({
     term,
     country,
@@ -31,13 +31,14 @@ function buildItunesUrl({ term, country = 'au', media = 'all', limit = 20 }) {
 // Search controller
 const search = async (req, res) => {
   console.log('Search requested by:', req.user);
-  
   const { term } = req.query;
   if (!term) return res.status(400).json({ error: 'term query parameter is required' });
 
   const country = req.query.country || 'us';
   const media = req.query.media || 'music';
-  const limit = Math.min(Number(req.query.limit) || 20, 200);
+  
+  const requestedLimit = Number(req.query.limit) || 24;
+  const limit = Math.min(requestedLimit, 24); // never request more than 24
 
   const url = buildItunesUrl({ term, country, media, limit });
 
@@ -47,7 +48,17 @@ const search = async (req, res) => {
       const text = await response.text();
       return res.status(response.status).json({ error: 'upstream error', details: text });
     }
+    
     const data = await response.json();
+
+    // Defensive server-side cap: ensure no more than 20 items are returned
+    if (Array.isArray(data.results) && data.results.length > 24) {
+      data.results = data.results.slice(0, 24);
+      if (typeof data.resultCount === "number") {
+        data.resultCount = data.results.length;
+      }
+    }
+
     res.json(data);
   } catch (err) {
     console.error('iTunes fetch error', err);

@@ -129,7 +129,6 @@ input, textarea, select, button {
   font-weight: 700;
   padding: 10px;
   border: none;
-  margin: 10px;
   margin-left: 0;
   margin-right: 0;
 }
@@ -152,17 +151,25 @@ button:focus {
 
 header {
   display: flex;
-  align-items: center;          /* vertically center */
-  gap: 1rem;                    /* optional small spacing between elements */
+  align-items: center;             /* vertically center h2 + NavBar */
+  justify-content: space-between;  /* push nav to the right */
+  gap: 2rem;
   width: 100%;
-  padding: 1 0rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding: 0 1rem;
+  padding-top: 1rem;
+  padding-left: 0;
   box-sizing: border-box;
+  /* optional: give a predictable height */
+  min-height: 64px;
+}
+
+header .divider {
+ color: var(--rule);
 }
 
 footer {
   margin-top: 100px;
+  margin-bottom: 50px;
 }
 
 .footerDiv {
