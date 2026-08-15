@@ -4,7 +4,7 @@ function issueToken(req, res) {
   // NOTE: In production you should protect this endpoint (API key, client certificate, etc.)
   // so that arbitrary clients can't request tokens.
   const secret = process.env.JWT_SECRET || "Fave-manager";
-  const expiresIn = process.env.JWT_EXPIRES_IN || "30m";
+  const expiresIn = process.env.JWT_EXPIRES_IN || "8h";
 
   // Minimal token payload:
   const payload = {

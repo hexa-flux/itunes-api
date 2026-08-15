@@ -23,7 +23,8 @@ export function MovieItem({ item }) {
   return (
     <>
       <Card.Title>
-        {item.trackName} {/* Rating badge shown only if M or above */}
+        {item.trackName} {" "}
+        {/* Rating badge shown only if M or above */}
         {showRating && (
           <Badge
             bg="danger"
@@ -57,7 +58,7 @@ export function TVShowItem({ item }) {
   return (
     <>
       <Card.Title>
-        {item.trackName}
+        {item.trackName} {" "}
         {showRating && (
           <Badge
             bg="danger"
@@ -89,7 +90,7 @@ export function PodcastItem({ item }) {
   return (
     <>
       <Card.Title>
-        {item.collectionName ?? item.trackName}
+        {item.collectionName ?? item.trackName} {" "}
         {showExplicit && (
           <Badge bg="danger" className="me-2" aria-label={`Explicit`}>
             Explicit
@@ -118,7 +119,7 @@ export function MusicItem({ item }) {
   return (
     <>
       <Card.Title>
-        {item.trackName}
+        {item.trackName} {" "}
         {showExplicit && (
           <Badge bg="danger" className="me-2" aria-label={`Explicit`}>
             Explicit
@@ -148,7 +149,7 @@ export function AudiobookItem({ item }) {
   return (
     <>
       <Card.Title>
-        {item.collectionName}
+        {item.collectionName} {" "}
         {showExplicit && (
           <Badge bg="danger" className="me-2" aria-label={`Explicit`}>
             Explicit
