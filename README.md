@@ -11,7 +11,9 @@ This Express/React full-stack app provides a searching and favouriting system fo
 
 ## Installation and startup
 
-To install the app, simply download and save the api files to your computer. Ensure /backend/ and /frontend/ are saved in the same folder. To start up, open a terminal on the /backend/ directory and another on the /frontend/ directory. On the back-end, run the command `npm start` and wait for `Server is running on (PORT)` to print in the terminal. Then run the command `npm run dev` on the front-end, wait for React to start up and then press and enter `o`. A browser window with the app should then open.
+To install the app, simply download and save the api files to your computer. Ensure /backend/ and /frontend/ are saved in the same folder. Then open up a terminal window and run the command `npm install` in both the /backend/ and /frontend/ directories.
+
+To start up, open a terminal on the /backend/ directory and another on the /frontend/ directory. On the back-end, run the command `npm start` and wait for `Server is running on (PORT)` to print in the terminal. Then run the command `npm run dev` on the front-end, wait for React to start up and then press and enter `o`. A browser window with the app should then open.
 
 ---
 
