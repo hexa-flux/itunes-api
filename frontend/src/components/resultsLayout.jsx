@@ -11,7 +11,11 @@ import {
   SoftwareItem,
   DefaultItem,
 } from "./itemRenderers";
-import { safeHttpUrl, artworkWithSize } from "../utilities/utilities";
+import {
+  getItemId,
+  safeHttpUrl,
+  artworkWithSize,
+} from "../utilities/utilities";
 
 import "./resultsFormat.css";
 
@@ -43,6 +47,13 @@ export default function ResultsLayout({
   };
 
   const renderItem = (item, idx) => {
+    // normalized id with fallback
+    const id = getItemId(item) ?? `idx-${idx}`;
+
+    // name fallbacks for accessible labels and alt text
+    const name =
+      item.trackName ?? item.collectionName ?? item.artistName ?? "item";
+
     // Choose renderer based on item kind
     const typeKey = item.kind ?? item.wrapperType ?? item.entity ?? "unknown";
     const Renderer = renderers[typeKey] ?? DefaultItem;
@@ -61,7 +72,7 @@ export default function ResultsLayout({
 
     // Wrap the content in the shared card frame and return
     return (
-      <Col key={item.trackId ?? item.collectionId ?? idx}>
+      <Col key={id}>
         <Card className="h-100 product-card">
           {/* Lazy loading is used to reduce initial load */}
           {/* With responsive resolution selection */}
@@ -71,7 +82,7 @@ export default function ResultsLayout({
                 src={src400}
                 srcSet={`${src200} 200w, ${src400} 400w, ${src800} 800w`}
                 sizes="(max-width: 768px) 200px, (max-width: 992px) 400px, 800px"
-                alt={item.trackName}
+                alt={name}
                 loading="lazy"
               />
             </div>
@@ -80,9 +91,9 @@ export default function ResultsLayout({
             {/* Build the inner content by invoking the chosen renderer */}
             <Renderer item={item} />
             {/* 
-              Row for controls.
-              Using d-flex + justify-content-between so left and right groups align.
-              */}
+                Row for controls.
+                Using d-flex + justify-content-between so left and right groups align.
+                */}
             <div className="d-flex justify-content-between align-items-center mt-2 mt-auto gap-3">
               {/* LEFT SIDE */}
               <div>
@@ -93,8 +104,8 @@ export default function ResultsLayout({
                   aria-pressed={isFav}
                   aria-label={
                     isFav
-                      ? `Remove ${item.trackName} from favourites`
-                      : `Add ${item.trackName} to favourites`
+                      ? `Remove ${name} from favourites`
+                      : `Add ${name} to favourites`
                   }
                 >
                   {isFav ? "Remove favourite" : "Add favourite"}
@@ -111,7 +122,7 @@ export default function ResultsLayout({
                   rel={safeUrl ? "noopener noreferrer" : undefined}
                   aria-label={
                     safeUrl
-                      ? `View ${item.trackName ?? "item"} on iTunes`
+                      ? `View ${name ?? "item"} on iTunes`
                       : undefined
                   }
                   disabled={!safeUrl}
@@ -131,13 +142,13 @@ export default function ResultsLayout({
   return (
     <Container className="py-4">
       {/* 
-          Row: react-bootstrap responsive props control how many columns per row.
-            xs={1}  -> 1 column on extra-small screens
-            sm={2}  -> 2 columns on small screens
-            md={3}  -> 3 columns on medium screens
-            lg={4}  -> 4 columns on large screens
-          className="g-4": bootstrap gap utility (gutters) for rows/columns
-        */}
+            Row: react-bootstrap responsive props control how many columns per row.
+              xs={1}  -> 1 column on extra-small screens
+              sm={2}  -> 2 columns on small screens
+              md={3}  -> 3 columns on medium screens
+              lg={4}  -> 4 columns on large screens
+            className="g-4": bootstrap gap utility (gutters) for rows/columns
+          */}
       <Row xs={1} sm={2} md={3} lg={4} className="g-4">
         {results.map(renderItem)}
       </Row>

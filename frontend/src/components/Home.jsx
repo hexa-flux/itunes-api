@@ -7,9 +7,10 @@ import axiosClient from "../api/axiosClient";
 import { AuthContext } from '../auth/AuthProvider';
 
 import {
+  getItemId,
+  toggleFavourite,
   saveResultsToSession,
   loadResultsFromSession,
-  toggleFavourite,
 } from "../utilities/utilities";
 import NavBar from "../routes/navBar";
 import SearchBar from "../forms/searchBar";
@@ -37,7 +38,7 @@ export default function Home() {
 
   // Create a fast lookup of ids (memoized)
   const favouriteIds = React.useMemo(
-    () => new Set(favourites.map((f) => f.trackId)),
+    () => new Set(favourites.map((f) => getItemId(f))),
     [favourites],
   );
 
@@ -114,21 +115,18 @@ export default function Home() {
   }, []);
 
   // Call favourites toggler
-  const handleFavourite = (item) => {
-    const next = toggleFavourite(item);
-    if (next) {
-      setFavourites(next)
-      if (next.some((f) => f.trackId === item.trackId)) {
-        setMsg({ type: "success", text: "Added to favourites." });
-      } else {
-        setMsg({ type: "success", text: "Removed from favourites." });
-      }
-    } else {
-      setMsg({ type: "error", text: "Failed to update favourites." });
-    }
-    // clear transient message
-    setTimeout(() => setMsg(null), 2000);
-  };
+const handleFavourite = (item) => {
+  const next = toggleFavourite(item);
+  if (next) {
+    setFavourites(next);
+    const added = next.some((f) => getItemId(f) === getItemId(item));
+    setMsg({ type: "success", text: added ? "Added to favourites." : "Removed from favourites." });
+  } else {
+    setMsg({ type: "error", text: "Failed to update favourites." });
+  }
+  // clear transient message
+  setTimeout(() => setMsg(null), 2000);
+};
 
   return (
     <div>
@@ -173,7 +171,7 @@ export default function Home() {
           <ResultsLayout
             results={results}
             favouritesHandler={handleFavourite}
-            isFavourited={(item) => favouriteIds.has(item.trackId)}
+            isFavourited={(item) => favouriteIds.has(getItemId(item))}
           />
         )}
       </main>

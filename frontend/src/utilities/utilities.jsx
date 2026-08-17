@@ -1,3 +1,45 @@
+// Catch usable id for favourites functionality
+export const getItemId = (item) => {
+  // Prefer trackId, fall back to collectionId
+  // Return null/undefined if neither present (caller should handle)
+  // String cast to prevent numeric collisions
+  if (item.trackId != null) return `track:${String(item.trackId)}`;
+  if (item.collectionId != null) return `collection:${String(item.collectionId)}`;
+};
+
+/* Central favourites helper */
+export function toggleFavourite(item) {
+  const id = getItemId(item);
+  if (!id) return null;
+
+  try {
+    const raw = localStorage.getItem("favourites");
+    const list = raw ? JSON.parse(raw) : [];
+
+    // Build a map keyed by the normalized id for fast lookup
+    const idx = list.findIndex((f) => getItemId(f) === id);
+
+    let next;
+    if (idx === -1) {
+      // Add (store the whole item so view can render)
+      next = [...list, item];
+    } else {
+      // Remove
+      next = [...list.slice(0, idx), ...list.slice(idx + 1)];
+    }
+
+    localStorage.setItem("favourites", JSON.stringify(next));
+
+    // Notify same-tab listeners (you already add window listeners)
+    window.dispatchEvent(new CustomEvent("local-storage", { detail: { key: "favourites" } }));
+
+    return next;
+  } catch (err) {
+    console.error("toggleFavourite failed:", err);
+    return null;
+  }
+}
+
 export const RESULTS_CACHE_KEY = 'itunes_results_v1';
 export const LAST_QUERY_KEY = 'itunes_last_query_v1';
 
@@ -26,23 +68,6 @@ export function loadResultsFromSession() {
     console.warn('Failed to read search results from sessionStorage', e);
     return { results: null, lastQuery: null };
   }
-}
-
-/* Central favourites helper */
-export function toggleFavourite(item) {
-  if (!item.trackId) return null;
-
-  const raw = localStorage.getItem("favourites");
-  const favouritesList = raw ? JSON.parse(raw) : [];
-
-  const exists = favouritesList.some((f) => (f.trackId) === item.trackId);
-  const next = exists
-    ? favouritesList.filter((f) => (f.trackId) !== item.trackId) // remove if item exists
-    : [...favouritesList, item]; // Add new item
-
-  localStorage.setItem("favourites", JSON.stringify(next));
-  window.dispatchEvent(new Event("local-storage"));
-  return next;
 }
 
 /* Release year helper */

@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect, useMemo } from "react";
 
-import { toggleFavourite } from "../utilities/utilities";
+import { getItemId, toggleFavourite } from "../utilities/utilities";
 import NavBar from "../routes/navBar";
 import ResultsLayout from "./resultsLayout";
 
@@ -36,7 +36,7 @@ export default function Favourites() {
 
   // Create a fast lookup of ids (memoized)
   const favouriteIds = React.useMemo(
-    () => new Set(favourites.map((f) => f.trackId)),
+    () => new Set(favourites.map((f) => getItemId(f))),
     [favourites],
   );
 
@@ -48,7 +48,6 @@ export default function Favourites() {
     } else {
       setMsg({ type: "error", text: "Failed to update favourites." });
     }
-    // clear transient message
     setTimeout(() => setMsg(null), 2000);
   };
 
@@ -75,7 +74,7 @@ export default function Favourites() {
           <ResultsLayout
             results={favourites}
             favouritesHandler={handleRemoval}
-            isFavourited={(item) => favouriteIds.has(item.trackId)}
+            isFavourited={(item) => favouriteIds.has(getItemId(item))}
           />
         ) : (
           <p>You have no favourites!</p>
