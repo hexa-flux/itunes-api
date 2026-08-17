@@ -51,7 +51,7 @@ const search = async (req, res) => {
     
     const data = await response.json();
 
-    // Defensive server-side cap: ensure no more than 20 items are returned
+    // Defensive server-side cap: ensure no more than 24 items are returned
     if (Array.isArray(data.results) && data.results.length > 24) {
       data.results = data.results.slice(0, 24);
       if (typeof data.resultCount === "number") {
