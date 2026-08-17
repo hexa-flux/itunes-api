@@ -5,6 +5,7 @@
   font-style: normal;
 }
 
+/* Set type and colour rules */
 :root {
   --text: #F193B8;
   --bg: #171232;

@@ -61,6 +61,7 @@ export default function Home() {
       const data = res.data;
 
       if (Array.isArray(data.results)) {
+        // Set results locally
         setResults(data.results);
         saveResultsToSession(data.results, query); // persist results + query
       } else {
@@ -153,6 +154,7 @@ export default function Home() {
 
         <hr className="hr-medium"></hr>
 
+        {/* Show success/error messages */}
         {msg && (
           <div style={{ color: msg.type === "error" ? "red" : "green" }}>
             {msg.text}

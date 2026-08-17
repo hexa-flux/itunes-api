@@ -64,6 +64,7 @@ export default function Favourites() {
         <h1>Favourites</h1>
         <hr className="hr-medium"></hr>
 
+        {/* Show success/error messages */}
         {msg && (
           <div style={{ color: msg.type === "error" ? "red" : "green" }}>
             {msg.text}

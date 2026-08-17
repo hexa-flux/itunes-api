@@ -8,6 +8,7 @@ import { AuthProvider } from "./auth/AuthProvider";
 import Home from './components/Home';
 import Favourites from './components/Favourites';
 
+// Define router for navigation
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   },
 ]);
 
+// App is wrapped in JWT auth provider
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
